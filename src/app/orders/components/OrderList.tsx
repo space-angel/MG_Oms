@@ -1,8 +1,13 @@
 'use client';
 
-import styled from 'styled-components';
-import OrderItem from './OrderItem';
 import { useOrders } from '../hooks/useOrders';
+import OrderItem from './OrderItem';
+import { 
+  ListContainer, 
+  LoadingState, 
+  ErrorState, 
+  EmptyState 
+} from './styles';
 
 interface OrderListProps {
   timeSlot: string;
@@ -22,30 +27,4 @@ export default function OrderList({ timeSlot }: OrderListProps) {
       ))}
     </ListContainer>
   );
-}
-
-const ListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const StateContainer = styled.div`
-  text-align: center;
-  padding: 40px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-`;
-
-const LoadingState = styled(StateContainer)`
-  color: var(--primary-color);
-`;
-
-const ErrorState = styled(StateContainer)`
-  color: #FF3B30;
-`;
-
-const EmptyState = styled(StateContainer)`
-  color: #8E8E93;
-`; 
+} 
