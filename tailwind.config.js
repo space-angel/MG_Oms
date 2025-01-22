@@ -124,37 +124,38 @@ module.exports = {
           fontSize: '28px',
           lineHeight: '32px',
           fontWeight: '500',
+          fontFamily: 'Pretendard, sans-serif',
+        },
+        '.Title_28_Medium': {
+          fontSize: '28px',
+          lineHeight: '32px',
+          fontWeight: '400',
+          fontFamily: 'Pretendard, sans-serif',
         },
         '.Head_20_SemiBold': {
           fontSize: '20px',
           lineHeight: '28px',
           fontWeight: '500',
+          fontFamily: 'Pretendard JP, sans-serif',
         },
         '.Head_20_Medium': {
           fontSize: '20px',
           lineHeight: '28px',
           fontWeight: '400',
+          fontFamily: 'Pretendard JP, sans-serif',
         },
         '.Body_16_Medium': {
           fontSize: '16px',
           lineHeight: '24px',
           fontWeight: '300',
+          fontFamily: 'Pretendard JP, sans-serif',
         },
         '.Body_16_Regular': {
           fontSize: '16px',
           lineHeight: '24px',
           fontWeight: '200',
+          fontFamily: 'Pretendard JP, sans-serif',
         },
-        '.Body_14_Regular': {
-          fontSize: '14px',
-          lineHeight: '20px',
-          fontWeight: '300',
-        },
-        '.Caption_12_Regular': {
-          fontSize: '12px',
-          lineHeight: '16px',
-          fontWeight: '300',
-        }
       })
     }
   ],

@@ -1,13 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { selectedDateAtom, selectedTimesAtom, selectedTypesAtom } from '@/jotai/order';
 import { TIME_OPTIONS } from '@/constants/order';
 import Small from '@/components/Common/Button/Small';
+import { useState } from 'react';
 
 export default function OrderSummary() {
-  const [selectedDate, setSelectedDate] = useState('2025-01-09');
-  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(
+    TIME_OPTIONS.map(option => option.value)
+  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(['STORE', 'QUICK', 'DELIVERY']);
+
+  const setSelectedDateAtom = useSetAtom(selectedDateAtom);
 
   // 주문 시간 전체 선택 핸들러
   const handleSelectAllTimes = () => {
@@ -54,7 +60,7 @@ export default function OrderSummary() {
   const isAllTimesSelected = selectedTimes.length === TIME_OPTIONS.length;
   
   // 모든 수령 방법이 선택되었는지 확인
-  const isAllTypesSelected = selectedTypes.length === 3; // STORE, QUICK, DELIVERY
+  const isAllTypesSelected = selectedTypes.length === 3;
 
   return (
     <div className="flex flex-col gap-4 items-start px-6 pt-8 pb-8 w-full bg-white">
@@ -67,7 +73,9 @@ export default function OrderSummary() {
           <input 
             type="date" 
             value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            onChange={(e) => {
+              setSelectedDate(e.target.value);
+            }}
             className="Head_20_Medium text-gray-100 bg-transparent w-full"
           />
         </div>
@@ -79,11 +87,9 @@ export default function OrderSummary() {
         <div className="flex justify-between items-center">
           <h3 className="Head_20_SemiBold text-gray-80">주문 시간</h3>
           <button 
-            className={`
-              Body_16_Medium
-              text-center
-              ${isAllTimesSelected ? 'text-semantic-main-100' : 'text-gray-80 hover:text-gray-100'}
-            `}
+            className={`Body_16_Medium text-center ${
+              isAllTimesSelected ? 'text-semantic-main-100' : 'text-gray-80 hover:text-gray-100'
+            }`}
             onClick={handleSelectAllTimes}
           >
             모두 선택
@@ -108,11 +114,9 @@ export default function OrderSummary() {
         <div className="flex justify-between items-center">
           <h3 className="Head_20_SemiBold text-gray-80">수령 방법</h3>
           <button 
-            className={`
-              Body_16_Medium
-              text-center
-              ${isAllTypesSelected ? 'text-semantic-main-100' : 'text-gray-80 hover:text-gray-100'}
-            `}
+            className={`Body_16_Medium text-center ${
+              isAllTypesSelected ? 'text-semantic-main-100' : 'text-gray-80 hover:text-gray-100'
+            }`}
             onClick={handleSelectAllTypes}
           >
             모두 선택

@@ -33,6 +33,9 @@ body {
   overflow-x: hidden;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
 a {

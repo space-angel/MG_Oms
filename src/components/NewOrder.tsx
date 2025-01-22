@@ -1,22 +1,64 @@
 'use client';
 
-import { useState } from 'react';
-import { UserIcon, PhoneIcon, FileIcon, PlusCircleIcon, CloseIcon } from '@/components/Icons';
+import { useState, useMemo, useEffect } from 'react';
+import { UserIcon, PhoneIcon, PlusCircleIcon, CloseIcon } from '@/components/Icons';
 import Small from '@/components/Common/Button/Small';
 import AddModal from '@/components/AddModal';
 import { createOrder } from '@/lib/firebase/orders';
 import { OrderItem, DeliveryType } from '@/app/orders/types/order';
 import Toast from '@/components/Toast';
+import { useAtom } from 'jotai';
+import { selectedDateAtom } from '@/jotai/order';
 
 export default function NewOrder() {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [orderTime, setOrderTime] = useState('');
   const [selectedType, setSelectedType] = useState<DeliveryType>('STORE');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+
+  // 시간 옵션 생성 (7시부터 18시까지, 10분 단위)
+  const timeOptions = useMemo(() => {
+    if (!selectedDate) return [];
+    
+    const options = [];
+    for (let hour = 7; hour <= 18; hour++) {
+      for (let minute = 0; minute < 60; minute += 10) {
+        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        options.push({
+          label: timeString,
+          value: `${selectedDate}T${timeString}`
+        });
+      }
+    }
+    return options;
+  }, [selectedDate]);
+
+  // 선택된 시간을 보기 좋게 포맷팅
+  const formatDisplayTime = (dateTimeString: string) => {
+    if (!dateTimeString) return '시간 선택';
+    return dateTimeString.split('T')[1].slice(0, 5);
+  };
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.time-dropdown')) {
+        setIsTimeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleAddMenuItem = (item: OrderItem) => {
     setOrderItems(prev => {
@@ -44,7 +86,8 @@ export default function NewOrder() {
     setOrderItems(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!customerName || !phoneNumber || !orderTime || orderItems.length === 0) {
       alert('모든 필수 항목을 입력해주세요.');
       return;
@@ -52,13 +95,22 @@ export default function NewOrder() {
 
     setIsLoading(true);
     try {
-      await createOrder({
+      // orderTime은 이미 'YYYY-MM-DDTHH:mm' 형식으로 들어옴
+      // 시간 변환 없이 그대로 저장
+      const orderData = {
         customerName,
         phoneNumber,
-        orderTime,
+        orderTime, // 선택된 시간을 그대로 저장
         deliveryType: selectedType,
         items: orderItems,
-      });
+        status: 'PENDING',
+        createdAt: new Date().toISOString(),
+      };
+
+      await createOrder(orderData);
+      
+      // 주문 등록 완료 이벤트 발생
+      window.dispatchEvent(new Event('orderCreated'));
       setIsMenuOpen(false);
       setCustomerName('');
       setPhoneNumber('');
@@ -70,7 +122,7 @@ export default function NewOrder() {
         setShowToast(false);
       }, 3000);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to create order:', error);
       alert('주문 등록에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
@@ -129,14 +181,58 @@ export default function NewOrder() {
             <h3 className="Head_20_SemiBold text-gray-80">주문 정보</h3>
             
             <div className="flex flex-col gap-8 w-full">
-              <div className="flex items-center gap-3 p-[10px_12px] bg-gray-10 rounded-lg">
-                <FileIcon width={24} height={24} className="text-[#B3B8BE] flex-shrink-0" />
+              <div className="flex items-center justify-between p-[10px_12px] bg-gray-10 rounded-lg">
                 <input 
-                  type="datetime-local"
-                  value={orderTime}
-                  onChange={(e) => setOrderTime(e.target.value)}
-                  className="Head_20_Medium bg-transparent w-full min-w-0 text-gray-100"
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => {
+                    setSelectedDate(e.target.value);
+                    setOrderTime('');
+                  }}
+                  className="Head_20_Medium bg-transparent w-full text-gray-100"
                 />
+              </div>
+
+              <div className="relative time-dropdown">
+                <button
+                  type="button"
+                  onClick={() => setIsTimeDropdownOpen(prev => !prev)}
+                  disabled={!selectedDate}
+                  className="flex items-center justify-between w-full p-[10px_12px] bg-gray-10 rounded-lg disabled:opacity-50"
+                >
+                  <span className="Head_20_Medium text-gray-100">
+                    {formatDisplayTime(orderTime)}
+                  </span>
+                  <svg
+                    className={`w-5 h-5 transition-transform ${isTimeDropdownOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isTimeDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-20 max-h-[300px] overflow-y-auto time-dropdown-content">
+                    {timeOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setOrderTime(option.value);
+                          setIsTimeDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-2 text-left hover:bg-gray-10 Head_20_Medium ${
+                          orderTime === option.value 
+                            ? 'bg-semantic-main-10 text-semantic-main-100' 
+                            : 'text-gray-80'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-4">
