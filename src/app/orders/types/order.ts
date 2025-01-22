@@ -1,13 +1,4 @@
-export interface Order {
-  id: string;
-  orderTime: string;
-  customerName: string;
-  phoneNumber: string;
-  items: OrderItem[];
-  deliveryType: DeliveryType;
-  status: OrderStatus;
-  specialRequests?: string;
-}
+export type DeliveryType = 'STORE' | 'QUICK' | 'DELIVERY';
 
 export interface OrderItem {
   menuName: string;
@@ -15,10 +6,15 @@ export interface OrderItem {
   price: number;
 }
 
-export enum DeliveryType {
-  STORE = 'STORE',
-  QUICK = 'QUICK',
-  DELIVERY = 'DELIVERY'
+export interface Order {
+  id?: string;
+  customerName: string;
+  phoneNumber: string;
+  orderTime: string;
+  deliveryType: DeliveryType;
+  items: OrderItem[];
+  createdAt: string;
+  status: OrderStatus;
 }
 
 export enum OrderStatus {

@@ -1,5 +1,5 @@
 export const TIME_OPTIONS = [
-  { value: 'ALL', label: '전체' },
+  { value: 'BEFORE_9', label: '9시 이전' },
   { value: '9', label: '9시' },
   { value: '10', label: '10시' },
   { value: '11', label: '11시' },
@@ -7,6 +7,7 @@ export const TIME_OPTIONS = [
   { value: '13', label: '13시' },
   { value: '14', label: '14시' },
   { value: '15', label: '15시' },
+  { value: 'AFTER_15', label: '15시 이후' },
 ] as const;
 
 export const STATUS_COLORS = {

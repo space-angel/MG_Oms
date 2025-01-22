@@ -16,28 +16,22 @@ import { Order, OrderStatus, DeliveryType } from '@/app/orders/types/order';
 const ordersRef = collection(db, 'orders');
 
 // 새로운 주문 생성
-export async function createOrder(orderData: Omit<Order, 'id' | 'status'>) {
+export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>) => {
   try {
-    // 기본값 설정과 함께 주문 데이터 생성
-    const orderWithDefaults = {
+    const ordersRef = collection(db, 'orders');
+    const newOrder = {
       ...orderData,
-      orderTime: Timestamp.fromDate(new Date(orderData.orderTime)),
-      status: OrderStatus.PENDING,  // 새 주문은 항상 PENDING으로 시작
+      status: 'PENDING' as const,
+      createdAt: new Date().toISOString()
     };
-
-    const docRef = await addDoc(ordersRef, orderWithDefaults);
     
-    // 저장된 데이터 반환 (Timestamp를 다시 string으로 변환)
-    return {
-      id: docRef.id,
-      ...orderData,
-      status: OrderStatus.PENDING
-    };
+    const docRef = await addDoc(ordersRef, newOrder);
+    return { id: docRef.id, ...newOrder };
   } catch (error) {
     console.error('주문 생성 중 오류 발생:', error);
-    throw new Error('주문을 생성하는데 실패했습니다.');
+    throw error;
   }
-}
+};
 
 // 주문 상태 업데이트
 export async function updateOrderStatus(
@@ -57,14 +51,15 @@ export async function updateOrderStatus(
 const validateOrder = (data: any): Order => {
   const order: Order = {
     id: data.id,
-    orderTime: data.orderTime.toDate().toISOString(),
+    orderTime: data.orderTime,
     customerName: data.customerName,
     phoneNumber: data.phoneNumber,
     items: data.items,
-    deliveryType: data.deliveryType as DeliveryType,
-    status: data.status as OrderStatus,
-    specialRequests: data.specialRequests
+    deliveryType: data.deliveryType,
+    status: data.status || OrderStatus.PENDING,
+    createdAt: data.createdAt
   };
+
   return order;
 };
 

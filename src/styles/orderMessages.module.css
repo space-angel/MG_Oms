@@ -1,0 +1,42 @@
+.container {
+  padding: 20px;
+  height: 100%;
+  background-color: white;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-color);
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.messageItem {
+  padding: 16px;
+  background-color: var(--background-light);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.messageItem:hover {
+  background-color: #f0f0f0;
+}
+
+.time {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color);
+} 
