@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import StyledComponentsRegistry from "@/lib/registry";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -20,9 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={geist.className}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
-      </body>
+      <body className={geist.className}>{children}</body>
     </html>
   );
 }

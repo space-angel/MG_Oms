@@ -54,5 +54,25 @@ export const ordersApi = {
       console.error('주문 상태 업데이트 중 오류 발생:', error);
       throw error;
     }
+  },
+
+  createOrder: async (orderData: Omit<Order, 'id' | 'status'>): Promise<Order> => {
+    try {
+      const response = await fetch(BASE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+
+      if (!response.ok) {
+        throw new Error('주문 생성에 실패했습니다.');
+      }
+
+      const newOrder = await response.json();
+      return newOrder;
+    } catch (error) {
+      console.error('주문 생성 중 오류 발생:', error);
+      throw error;
+    }
   }
 }; 

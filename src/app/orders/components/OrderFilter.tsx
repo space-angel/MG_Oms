@@ -1,26 +1,31 @@
 'use client';
 
 import { TIME_OPTIONS } from '@/constants/order';
-import { FilterContainer, FilterButton } from './styles';
+import { useRouter, useSearchParams } from 'next/navigation';
+import styles from '@/styles/orders.module.css';
 
-interface OrderFilterProps {
-  selectedTime: string;
-  onTimeChange: (time: string) => void;
-}
+export default function OrderFilter() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedTime = searchParams.get('time') || 'ALL';
 
-export default function OrderFilter({ selectedTime, onTimeChange }: OrderFilterProps) {
+  const handleTimeChange = (time: string) => {
+    router.push(`/orders?time=${time}`);
+  };
+
   return (
-    <FilterContainer>
+    <div className={styles.filterContainer}>
       {TIME_OPTIONS.map((option) => (
-        <FilterButton
+        <button
           key={option.value}
-          isSelected={selectedTime === option.value}
-          onClick={() => onTimeChange(option.value)}
+          className={styles.filterButton}
+          data-selected={selectedTime === option.value}
+          onClick={() => handleTimeChange(option.value)}
           type="button"
         >
           {option.label}
-        </FilterButton>
+        </button>
       ))}
-    </FilterContainer>
+    </div>
   );
 } 

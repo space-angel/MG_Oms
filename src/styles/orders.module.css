@@ -1,0 +1,117 @@
+/* 주문 목록 */
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+/* 주문 아이템 */
+.orderItem {
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.timeInfo {
+  font-size: 14px;
+  color: #666;
+}
+
+.customerInfo {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+/* 배지 스타일 */
+.badgeContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.typeBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #E0E0E0;
+}
+
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: white;
+}
+
+/* 필터 스타일 */
+.filterContainer {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.filterButton {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.filterButton[data-selected="true"] {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* 메뉴 아이템 스타일 */
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.menuName {
+  flex: 1;
+  font-size: 14px;
+}
+
+.quantity {
+  margin: 0 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.specialRequests {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #666;
+} 
