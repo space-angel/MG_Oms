@@ -1,13 +1,14 @@
 export const TIME_OPTIONS = [
-  { value: 'ALL', label: '전체' },
-  { value: '9', label: '9시' },
-  { value: '10', label: '10시' },
-  { value: '11', label: '11시' },
-  { value: '12', label: '12시' },
-  { value: '13', label: '13시' },
-  { value: '14', label: '14시' },
-  { value: '15', label: '15시' },
-] as const;
+  { label: '9시 이전', value: '9-before' },
+  { label: '9시', value: '9' },
+  { label: '10시', value: '10' },
+  { label: '11시', value: '11' },
+  { label: '12시', value: '12' },
+  { label: '13시', value: '13' },
+  { label: '14시', value: '14' },
+  { label: '15시', value: '15' },
+  { label: '15시 이후', value: '15-after' }
+];
 
 export const STATUS_COLORS = {
   PENDING: '#FF9500',

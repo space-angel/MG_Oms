@@ -1,0 +1,62 @@
+.container {
+  padding: 20px;
+  height: 100%;
+  background-color: white;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-color);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: var(--primary-color);
+}
+
+.submitButton {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #0066cc;
+} 
