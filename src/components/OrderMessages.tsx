@@ -255,6 +255,17 @@ export default function OrderMessages() {
     return { totalPi, totalIndividualItems };
   }, [menuSummary]);
 
+  // 스크롤 상태 관리를 위한 state 추가
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    // 스크롤이 맨 아래에 도달했는지 확인 (여유값 10px)
+    const isBottom = scrollHeight - scrollTop - clientHeight < 10;
+    setIsScrolledToBottom(isBottom);
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg p-6">
@@ -266,7 +277,7 @@ export default function OrderMessages() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6">
+    <div className="bg-white rounded-lg p-6 flex flex-col h-[calc(100vh-200px)]">
       {/* 상단 타이틀 */}
       <div className="border-b border-gray-20 pb-4 mb-6">
         <h2 className="Title_24_SemiBold text-gray-100">주문 요약</h2>
@@ -301,61 +312,72 @@ export default function OrderMessages() {
         </div>
       </div>
 
-      {/* 메뉴 총합 표시 */}
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col divide-y divide-gray-20">
-          {sortedMenuSummary.map(([menuName, quantity]) => (
-            <div 
-              key={menuName}
-              className="flex justify-between items-center py-4 first:pt-0 last:pb-0"
-            >
-              <span className="Title_18_Medium text-gray-100">{menuName}</span>
-              <div className="flex items-center gap-2">
-                <span className="Body_16_Regular text-gray-80">{quantity}개</span>
+      {/* 스크롤 가능한 컨텐츠 영역 */}
+      <div 
+        className="flex-1 overflow-y-auto relative"
+        onScroll={handleScroll}
+      >
+        <div className="flex flex-col gap-2 pb-4">
+          {/* 메뉴 총합 표시 */}
+          <div className="flex flex-col divide-y divide-gray-20">
+            {sortedMenuSummary.map(([menuName, quantity]) => (
+              <div 
+                key={menuName}
+                className="flex justify-between items-center py-4 first:pt-0 last:pb-0"
+              >
+                <span className="Title_18_Medium text-gray-100">{menuName}</span>
+                <div className="flex items-center gap-2">
+                  <span className="Body_16_Regular text-gray-80">{quantity}개</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {sortedMenuSummary.length === 0 && (
+            <div className="flex justify-center items-center py-8">
+              <span className="Title_18_Regular text-gray-60">선택된 시간대의 주문이 없습니다.</span>
+            </div>
+          )}
+
+          {/* 피 계산 섹션 */}
+          <div className="mt-8 pt-6 border-t border-gray-20">
+            <h3 className="Title_20_SemiBold text-gray-100 mb-4">필요한 피 개수</h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <span className="Title_18_Medium text-gray-80">흰피</span>
+                <span className="Body_16_Regular text-gray-80">
+                  {calculateTotalPiAndItems.totalPi.흰피}장
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="Title_18_Medium text-gray-80">쑥피</span>
+                <span className="Body_16_Regular text-gray-80">
+                  {calculateTotalPiAndItems.totalPi.쑥피}장
+                </span>
               </div>
             </div>
-          ))}
-        </div>
-
-        {sortedMenuSummary.length === 0 && (
-          <div className="flex justify-center items-center py-8">
-            <span className="Title_18_Regular text-gray-60">선택된 시간대의 주문이 없습니다.</span>
           </div>
+
+          {/* 개별떡 계산 섹션 */}
+          <div className="mt-8 pt-6 border-t border-gray-20">
+            <h3 className="Title_20_SemiBold text-gray-100 mb-4">개별떡 개수</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(calculateTotalPiAndItems.totalIndividualItems)
+                .filter(([_, count]) => count > 0)
+                .map(([itemName, count]) => (
+                  <div key={itemName} className="flex justify-between items-center">
+                    <span className="Title_18_Medium text-gray-80">{itemName}</span>
+                    <span className="Body_16_Regular text-gray-80">{count}개</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* 스크롤 표시기 - semantic-main-100 색상 적용 */}
+        {!isScrolledToBottom && (
+          <div className="sticky bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-semantic-main-100/10 to-transparent pointer-events-none" />
         )}
-
-        {/* 피 계산 섹션 */}
-        <div className="mt-8 pt-6 border-t border-gray-20">
-          <h3 className="Title_20_SemiBold text-gray-100 mb-4">필요한 피 개수</h3>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center">
-              <span className="Title_18_Medium text-gray-80">흰피</span>
-              <span className="Body_16_Regular text-gray-80">
-                {calculateTotalPiAndItems.totalPi.흰피}장
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="Title_18_Medium text-gray-80">쑥피</span>
-              <span className="Body_16_Regular text-gray-80">
-                {calculateTotalPiAndItems.totalPi.쑥피}장
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* 개별떡 계산 섹션 */}
-        <div className="mt-8 pt-6 border-t border-gray-20">
-          <h3 className="Title_20_SemiBold text-gray-100 mb-4">개별떡 개수</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(calculateTotalPiAndItems.totalIndividualItems)
-              .filter(([_, count]) => count > 0)
-              .map(([itemName, count]) => (
-                <div key={itemName} className="flex justify-between items-center">
-                  <span className="Title_18_Medium text-gray-80">{itemName}</span>
-                  <span className="Body_16_Regular text-gray-80">{count}개</span>
-                </div>
-              ))}
-          </div>
-        </div>
       </div>
     </div>
   );

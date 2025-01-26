@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { selectedDateAtom, selectedTimesAtom, selectedTypesAtom } from '@/jotai/order';
 import { TIME_OPTIONS } from '@/constants/order';
 import Small from '@/components/Common/Button/Small';
@@ -8,12 +8,8 @@ import { useState } from 'react';
 
 export default function OrderSummary() {
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
-  const [selectedTimes, setSelectedTimes] = useState<string[]>(
-    TIME_OPTIONS.map(option => option.value)
-  );
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(['STORE', 'QUICK', 'DELIVERY']);
-
-  const setSelectedDateAtom = useSetAtom(selectedDateAtom);
+  const [selectedTimes, setSelectedTimes] = useAtom(selectedTimesAtom);
+  const [selectedTypes, setSelectedTypes] = useAtom(selectedTypesAtom);
 
   // 주문 시간 전체 선택 핸들러
   const handleSelectAllTimes = () => {
@@ -61,6 +57,11 @@ export default function OrderSummary() {
   
   // 모든 수령 방법이 선택되었는지 확인
   const isAllTypesSelected = selectedTypes.length === 3;
+
+  // 필터가 모두 비어있는지 확인하는 함수 수정
+  const isFiltersEmpty = () => {
+    return !selectedDate || selectedTimes.length === 0 || selectedTypes.length === 0;
+  };
 
   return (
     <div className="flex flex-col gap-4 items-start px-6 pt-8 pb-8 w-full bg-white">
@@ -141,6 +142,12 @@ export default function OrderSummary() {
           />
         </div>
       </div>
+
+      {isFiltersEmpty() && (
+        <div className="w-full text-center py-4 text-gray-60">
+          주문 시간과 수령 방법을 선택해주세요.
+        </div>
+      )}
     </div>
   );
 } 
